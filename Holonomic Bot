@@ -1,0 +1,160 @@
+#include <SoftwareSerial.h>
+#define m1 33
+#define m2 31
+#define m3 35
+#define m4 37
+
+#define pwm1 3
+#define pwm2 2
+#define pwm3 4
+#define pwm4 5
+SoftwareSerial BTSerial(10,11); // RX, TX pins of Arduino connected to TX, RX pins of Bluetooth module
+
+int speed = 150; // range is 0 to 254; ideal = 
+
+void setup() {
+  Serial.begin(9600); // Serial monitor for debugging
+  BTSerial.begin(9600); // Bluetooth module baud rate
+  
+  Serial.println("Ready to communicate");
+  pinMode(m1,OUTPUT);
+  pinMode(m2,OUTPUT);
+  pinMode(m3,OUTPUT);
+  pinMode(m4,OUTPUT);
+}
+
+void loop() {
+  // Check if data is available from Bluetooth module
+  if (BTSerial.available()) {
+    char sendChar = BTSerial.read(); // Read the character received from Bluetooth
+    
+    // Serial.print("Received: ");
+    Serial.println(sendChar); // Print the received character to the serial monitor
+
+  if(sendChar == 'F'){
+    forward();
+  }
+  else if(sendChar == 'S'){
+    stop();
+  }
+  else if(sendChar == 'B'){
+    backward();
+  }
+  else if(sendChar == 'R'){
+    Right();
+  }
+  else if(sendChar == 'L'){
+    Left();
+  }
+  else if(sendChar == 'G'){
+   /* digitalWrite(m1,1);
+    analogWrite(2, speed);
+    digitalWrite(m2,0);
+    analogWrite(3, speed);
+    digitalWrite(m3,1);
+    analogWrite(4,0);
+    digitalWrite(m4,0);
+    analogWrite(5,0);*/
+    forward();
+    Left();
+  }
+  else if(sendChar == 'H'){
+   /* digitalWrite(m1,0);
+    analogWrite(2, speed);
+    digitalWrite(m2,0);
+    analogWrite(3,0);
+    digitalWrite(m3,1);
+    analogWrite(4,0);
+    digitalWrite(m4,1);
+    analogWrite(5, speed);*/
+    backward();
+    Left();
+  }
+  else if(sendChar == 'I'){
+    /*digitalWrite(m1,0);
+    analogWrite(2,0);
+    digitalWrite(m2,1);
+    analogWrite(3, speed);
+    digitalWrite(m3,0);
+    analogWrite(4, speed);
+    digitalWrite(m4,0);
+    analogWrite(5,0);*/
+    forward();
+    Right();
+  }
+  else if(sendChar == 'J'){
+   /* digitalWrite(m1,0);
+    analogWrite(2,0);
+    digitalWrite(m2,1);
+    analogWrite(3,0);
+    digitalWrite(m3,1);
+    analogWrite(4,speed);
+    digitalWrite(m4,0);
+    analogWrite(5,speed);*/
+    backward();
+    Right();
+  }
+  }
+  
+  // Check if data is available from Serial monitor
+  if (Serial.available()) {
+    char sendChar = Serial.read(); // Read the character received from serial monitor
+    BTSerial.print(sendChar); // Send the character to Bluetooth module
+  }
+}
+
+void forward()
+{
+  digitalWrite(m1,1);
+  analogWrite(pwm1, speed);
+  digitalWrite(m2,1);
+  analogWrite(pwm2,0);
+  digitalWrite(m3,0);
+  analogWrite(pwm3, speed);
+  digitalWrite(m4,0);
+  analogWrite(pwm4,0);
+}
+void stop()
+{
+  digitalWrite(m1,1);
+  digitalWrite(m2,0);
+  digitalWrite(m3,0);
+  digitalWrite(m4,1);
+  analogWrite(pwm1,0);
+  analogWrite(pwm2,0);
+  analogWrite(pwm3,0);
+  analogWrite(pwm4,0);
+}
+void backward()
+{
+  digitalWrite(m1,0);
+  analogWrite(pwm1, speed);
+  digitalWrite(m2,1);
+  analogWrite(pwm2,0);
+  digitalWrite(m3,1);
+  analogWrite(pwm3, speed);
+  digitalWrite(m4,0);
+  analogWrite(pwm4,0);
+}
+void Right()
+{
+  digitalWrite(m1,0);
+  analogWrite(pwm1,0);
+  digitalWrite(m2,0);
+  analogWrite(pwm2, speed);
+  digitalWrite(m3,1);
+  analogWrite(pwm3,0);
+  digitalWrite(m4,1);
+  analogWrite(pwm4, speed);
+}
+void Left()
+{
+  digitalWrite(m1,0);
+  analogWrite(pwm1,0);
+  digitalWrite(m2,1);
+  analogWrite(pwm2, speed);
+  digitalWrite(m2,1);
+  analogWrite(pwm3,0);
+  digitalWrite(m4,0);
+  analogWrite(pwm4, speed);
+}
